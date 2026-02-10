@@ -8,19 +8,21 @@ A short message describing an expense, in Traditional Chinese or mixed Chinese/E
 
 ## Output
 
-Return ONLY a valid JSON object with these fields:
+Return ONLY a valid JSON array. Each expense is one object:
 
 ```json
-{
-  "date": "YYYY-MM-DD",
-  "item": "item name",
-  "store": "store name or empty string",
-  "amount": 250,
-  "payer": "Miguel",
-  "category": "category name",
-  "payment_method": "payment method",
-  "notes": "optional notes or empty string"
-}
+[
+  {
+    "date": "YYYY-MM-DD",
+    "item": "item name",
+    "store": "store name or empty string",
+    "amount": 250,
+    "payer": "Miguel",
+    "category": "category name",
+    "payment_method": "payment method",
+    "notes": "optional notes or empty string"
+  }
+]
 ```
 
 ## Field Rules
@@ -31,36 +33,48 @@ Return ONLY a valid JSON object with these fields:
 - **amount**: Numeric amount (required, positive integer). Extract from the message.
 - **payer**: Default "Miguel". If message mentions 老婆/太太/Hannie -> "Hannie".
 - **category**: Choose ONE from the category list below.
-- **payment_method**: Default "現金". If 刷卡/卡/信用卡 -> "信用卡". If Line Pay/Apple Pay/街口 -> "行動支付". If 轉帳/匯款 -> "轉帳".
+- **payment_method**: Default "現金". See payment method rules below.
 - **notes**: Any extra context. Empty string if none.
 
-## Categories
+## Categories (11)
 
-| Category | Keywords |
-|----------|----------|
-| 伙食費 | 午餐, 晚餐, 早餐, 便當, 買菜, 全聯, 家樂福, Costco, 超市, 菜市場, 食材, 煮飯 |
-| 外食 | 餐廳, 火鍋, 麥當勞, 外送, 小吃, 夜市, 聚餐, 壽司, 拉麵, 披薩, foodpanda, UberEats |
-| 飲料 | 咖啡, 手搖, 茶, 星巴克, 路易莎, 50嵐, 飲料 |
-| 超商 | 7-11, 全家, 超商, OK, 萊爾富, FamilyMart |
-| 油錢 | 加油, 油錢, 中油, 台塑 |
-| 通勤停車 | 停車, 高鐵, 捷運, Uber, 計程車, 公車, 通勤, ETC, 過路費, 火車, 台鐵 |
-| 保健品 | 維他命, 保健, 營養品, 魚油, 益生菌 |
-| 生活雜物 | 衛生紙, 洗衣精, 清潔, 日用品, 生活用品, 洗髮精, 沐浴乳, 牙膏 |
-| 醫療相關 | 看診, 藥, 牙醫, 醫院, 診所, 掛號, 健檢 |
-| 治裝費用 | 衣服, 鞋子, 褲子, 外套, 包包, 配件 |
-| 育兒開銷 | 尿布, 奶粉, 玩具, 童裝, 幼兒, 托嬰, 保母 |
-| 浪費 | All other expenses that don't fit above categories |
+| Category | When to use |
+|----------|-------------|
+| 伙食費 | 在家烹飪的食材、超市/市場採購的食物原料 |
+| 外食 | 在外用餐：餐廳、小吃攤、外送、超商熟食/便當/零食 |
+| 飲料 | 手搖飲、咖啡廳飲品、瓶裝/罐裝飲料 |
+| 交通 | 加油、停車、公共運輸、計程車/Uber、ETC、車輛保養維修 |
+| 生活用品 | 日用品、清潔用品、衛生用品、個人護理 |
+| 醫療保健 | 看診掛號、處方藥、保健食品、健檢 |
+| 治裝 | 衣服、鞋子、包包、配件飾品 |
+| 育兒 | 寶寶/兒童相關：尿布、奶粉、玩具、學費、保母、童裝 |
+| 娛樂 | 電影、景點門票、朋友聚餐（非日常外食）、遊戲、訂閱娛樂 |
+| 居家 | 家電、家具、居家維修、裝潢 |
+| 其他 | 以上都不適用的支出 |
 
 ## Disambiguation
 
-- Supermarket groceries (全聯/家樂福 buying food) -> 伙食費
-- Supermarket household items (cleaning supplies) -> 生活雜物
-- Convenience store purchases -> 超商 (do not subcategorize)
-- Eating at restaurants -> 外食
-- Cooking ingredients -> 伙食費
+- 超市（全聯/家樂福/Costco）買食材 -> 伙食費
+- 超市買清潔用品/日用品 -> 生活用品
+- 超商（7-11/全家）-> 依購買內容判斷：熟食/便當/零食 -> 外食；飲料 -> 飲料；日用品 -> 生活用品
+- 餐廳/外送/小吃攤/夜市 -> 外食
+- 朋友聚餐、慶祝餐會（非日常性質）-> 娛樂
+- 加油/停車/ETC/公共運輸/車輛維修保養 -> 交通
+- 看診/掛號/處方藥 -> 醫療保健
+- 維他命/保健食品/營養品 -> 醫療保健
+
+## Payment Method Rules
+
+- (default) 沒特別說 -> "現金"
+- 刷卡 / 卡 / 信用卡 -> "信用卡"
+- 轉帳 / 匯款 -> "銀行轉帳"
+- Line Pay / LP -> "Line Pay"
+- Apple Pay -> "Apple Pay"
+- 街口 -> "街口支付"
 
 ## Important
 
-- Return ONLY the JSON object, no other text.
-- If you cannot determine the amount, throw an error.
-- If the message is not an expense (e.g., greeting, question), return: {"error": "not_expense", "message": "This doesn't look like an expense record."}
+- Return ONLY the JSON array, no other text.
+- One message may contain multiple expenses. Return one object per expense in the array.
+- If you cannot determine the amount, return: `{"error": "missing_amount", "message": "..."}`
+- If the message is not an expense (e.g., greeting, question), return: `[]`
