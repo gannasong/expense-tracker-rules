@@ -38,7 +38,3 @@
 | Apple Pay | Apple Pay |
 | 街口支付 | 街口 |
 
-## Payer Rules
-
-- Default payer: Miguel
-- If message mentions: 老婆, 太太, Hannie, hannie -> payer = Hannie

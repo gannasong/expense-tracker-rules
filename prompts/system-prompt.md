@@ -17,7 +17,6 @@ Return ONLY a valid JSON array. Each expense is one object:
     "item": "item name",
     "store": "store name or empty string",
     "amount": 250,
-    "payer": "Miguel",
     "category": "category name",
     "payment_method": "payment method",
     "notes": "optional notes or empty string"
@@ -31,7 +30,6 @@ Return ONLY a valid JSON array. Each expense is one object:
 - **item**: Item name (required). Keep it concise.
 - **store**: Store name (optional). Empty string if not mentioned.
 - **amount**: Numeric amount (required, positive integer). Extract from the message.
-- **payer**: Default "Miguel". If message mentions 老婆/太太/Hannie -> "Hannie".
 - **category**: Choose ONE from the category list below.
 - **payment_method**: Default "現金". See payment method rules below.
 - **notes**: Any extra context. Empty string if none.
